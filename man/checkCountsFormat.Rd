@@ -1,4 +1,4 @@
-\name{checkCountsFormat} 
+﻿\name{checkCountsFormat} 
 \alias{checkCountsFormat} 
 \title{GammaModel::checkCountsFormat} 
 \usage{checkCountsFormat(counts)}

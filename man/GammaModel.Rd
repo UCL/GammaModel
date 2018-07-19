@@ -1,4 +1,4 @@
-\name{GammaModel} 
+﻿\name{GammaModel} 
 \alias{GammaModel} 
 \title{GammaModel} 
 \docType{package}
