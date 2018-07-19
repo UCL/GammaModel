@@ -9,7 +9,7 @@
 \references{Kill-off Patterns in Sheep and Goats: The Mandibles from Asvan Kale. Payne 1973. 
 
 http://www.jstor.org/stable/3642547}
-\description{Helper function to check counts is in the required format}
+\description{Helper function to check count data are in the required format}
 \details{Performs a few basic checks to ensure the raw count data are formatted as required: 
 
 A one-row data frame comprising column names of age classes (or multi-classes) in capital letters from 'A'. For example, Payne's 1973 caprine age classes are 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', and 'I'. However, it is more likely that the raw counts will include some multi-class assignments, for example 'ABCD', 'A', 'AB', 'B', 'BC' etc. Order does not matter.
