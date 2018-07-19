@@ -1,20 +1,13 @@
 Package: GammaModel
 Title: Modelling age-at-death profiles using the Gamma distribution
 Version: 1.0
-<<<<<<< HEAD
-Date: 2018-07-19
-Authors@R: person("Adrian", "Timpson", email = "a.timpson@ucl.ac.uk", role = c("aut", "cre"))
-Maintainer: Adrian Timpson
-Description: Tools to model age-at-death count data using the Gamma distribution. Accompanies 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E. Gillis, Katie Manning and Mark G. Thomas, published in Journal of Archaeological Science 2018. 
-Imports: dplyr, combinat, DEoptimR, stats, LaplacesDemon
-Depends: R (>= 3.0.1)
-=======
 Authors@R: person("Adrian", "Timpson", email = "a.timpson@ucl.ac.uk", role = c("aut", "cre"))
 Maintainer: Adrian Timpson <a.timpson@ucl.ac.uk>
-Description: Tools to model age-at-death count data using the Gamma distribution.     
-  Accompanies 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E. Gillis, Katie Manning and Mark G. Thomas, published in Journal of Archaeological Science 2018. 
+Description: Tools to model age-at-death count data using the Gamma distribution. 
+	Accompanies 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E. Gillis, Katie Manning and Mark G. Thomas, published in Journal of Archaeological Science 2018. 
+Imports: dplyr, combinat, DEoptimR, stats, LaplacesDemon
+Depends: R (>= 3.0.1)
 Imports: dplyr, combinat, DEoptimR, LaplacesDemon
 Depends: R (>= 3.1.0)
->>>>>>> 8f22a3540cc7e40aec151e8186240639e8dd8b01
 Suggests: scales
 License: GPL-3 
