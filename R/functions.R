@@ -7,7 +7,7 @@ require(DEoptimR)
 require(scales)
 require(LaplacesDemon)
 #-----------------------------------------------------------------------------------------------------------
-check.counts.format <- function(counts){
+checkCountsFormat <- function(counts){
 	# a few basic checks to ensure the format of the raw counts data is in the correct format
 	# Basic required format is a one row data.frame comprising column names of age classes (or multi-classes) in capital letters from 'A'
 	# For example, Payne's 1973 caprine age classes are 'A','B','C','D','E','F','G','H',and 'I'
@@ -16,24 +16,39 @@ check.counts.format <- function(counts){
 	
 	# counts: a one-row data.frame comprising integer counts, with column names of age classes (or multi-classes) in capital letters from 'A'
 	
+	errors <- 0	
+
 	# check is a data.frame
-	if(!is.data.frame(counts))stop('Raw count data must be a dataframe')
-
+	if(!is.data.frame(counts)){
+		warning('Raw count data must be a dataframe')
+		errors <- errors + 1
+		}
 	# Check just one row
-	if(nrow(counts)!=1)stop('Raw count data must comprise a single row dataframe')
-
+	if(nrow(counts)!=1){
+		warning('Raw count data must comprise a single row dataframe')
+		errors <- errors + 1
+		}
 	# check integers
-	if(!is.integer(as.matrix(counts)))stop('Raw count data must comprise only integers')
-
+	if(!is.integer(as.matrix(counts))){
+		warning('Raw count data must comprise only integers')
+		errors <- errors + 1
+		}
 	# check col names are unique
-	if(sum(duplicated(names(counts)))!=0)stop('Column names of raw count data must be unique')
-
+	if(sum(duplicated(names(counts)))!=0){
+		warning('Column names of raw count data must be unique')
+		errors <- errors + 1
+		}
 	# check col names are capital letters
 	letters <- unique(strsplit(paste(names(counts),collapse=''),split='')[[1]])
-	if(sum(!letters%in%LETTERS)!=0) stop("Column names of raw count data must comprise only capital letters, eg 'EFG' or 'E' ")
-return('OK')}
+	if(sum(!letters%in%LETTERS)!=0){
+		warning("Column names of raw count data must comprise only capital letters, eg 'EFG' or 'E' ")
+		errors <- errors + 1
+		}
+	if(errors==0)res <- 'OK'
+	if(errors!=0)res <- paste(errors, 'errors')
+return(res)}
 #-----------------------------------------------------------------------------------------------------------
-unique.class.maker <- function(x){
+uniqueClassMaker <- function(x){
 	# memory demands can be reduced hugely by retaining a multiclass that ALWAYS (every row of 'counts') have counts combined 
 
 	# x: string of class names, comprising capital letters from A. Eg c('ABCD','A','AB','B',...)
@@ -47,17 +62,17 @@ unique.class.maker <- function(x){
 		}
 return(x[unique(keep)])}
 #-----------------------------------------------------------------------------------------------------------
-all.arrangements <- function(counts){
+allArrangements <- function(counts){
 	# generate a matrix of all possible arrangements of the observed counts
  	# Memory demands from the total number of arrangements rapidly becomes huge if there are many counts across many multiclasses
 	# If data have large numbers, calculating likelihoods exactly therefore becomes inpractical using this approach.
 
-	# counts: data.frame satisfying the requirements of check.counts.format()
+	# counts: data.frame satisfying the requirements of checkCountsFormat()
 
 
-	check.counts.format(counts)
+	if(checkCountsFormat(counts)!='OK')stop()
 
-	classes <- unique.class.maker(names(counts))
+	classes <- uniqueClassMaker(names(counts))
 
 	m1 <- matrix(0,1,length(classes)); colnames(m1) <- classes
 
@@ -90,16 +105,16 @@ all.arrangements <- function(counts){
 		}
 return(m1)}
 #-----------------------------------------------------------------------------------------------------------
-random.arrangement <- function(counts){
+randomArrangement <- function(counts){
 	# Helper function required by GOF()
 	# Generates one possible random realisation (conversion of multi-class counts into single class counts), under the assumption that the 
 	# archaeologist's original multiclass assumption represents an equal probability of belonging to each of the individual classes. 
 	# I.e, a count belonging to multiclass 'AB' was believed to belong to either class 'A' or 'B' with an equal probability. 
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
 	
 	# ensure only one row
-	if(nrow(counts)>1)warning('random.arrangement() must be handed a one-row data.frame. Only the first row has been used.')
+	if(nrow(counts)>1)warning('randomArrangement() must be handed a one-row data.frame. Only the first row has been used.')
 	counts <- counts[1,]
 
 	# scrap any with a count of zero
@@ -124,12 +139,12 @@ random.arrangement <- function(counts){
 	all.counts[,names(cert.counts)] <- all.counts[,names(cert.counts)] + as.integer(cert.counts)
 return(all.counts)}
 #-----------------------------------------------------------------------------------------------------------
-combine.classes <- function(comb,model){
+combineClasses <- function(comb,model){
 	# Helper function required by GOF()
 	# Aggregates individual classes to match the model classes. 
 	# Column names of 'comb' must be single capital letters that occur within the column names of 'model'
 
-	# comb: data.frame of counts, in single classes only. Eg, output by random.arrangement()
+	# comb: data.frame of counts, in single classes only. Eg, output by randomArrangement()
 	# model: data.frame of model age class probabilities, with headers
 
 	class.agg <- names(model)
@@ -154,19 +169,19 @@ GOF <- function(counts, model, N=10000){
 	# calculating a p-value for each using a chi-squared test, then calculating the mean p-value. This automatically becomes the probability of the observed data being as or more extreme
 	# (in contrast to Fisher's method of combining p-values which answers a different question of how to combine p-values from independent trials).
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
 	# model: data.frame of model age class probabilities, with headers
 
-	check.counts.format(counts)
+	if(checkCountsFormat(counts)!='OK')stop()
 
 	all.p <- numeric(N)
 	for(n in 1:N){
 
 		# random assignment of multi-class counts into single classes
-		r <- random.arrangement(counts)
+		r <- randomArrangement(counts)
 
 		# aggregate single classes to match the model classes
-		r <- combine.classes(r,model)
+		r <- combineClasses(r,model)
 
 		# chi-squared p-value
 		x <- as.integer(r)
@@ -185,7 +200,7 @@ GOF <- function(counts, model, N=10000){
 
 return(res)}
 #-------------------------------------------------------------------------------------------------------
-convert.class.ages <- function(class.ages,multi.classes){
+convertClassAges <- function(class.ages,multi.classes){
 	# helper function to assist in computational efficiency, since class.ages can be combined where observed data permit
 	# Checks various requirements first.
 	
@@ -220,12 +235,12 @@ convert.class.ages <- function(class.ages,multi.classes){
 		}
 return(new)}
 #-------------------------------------------------------------------------------------------------------
-gamma.loglik <- function(x,class.ages,shape,mean){
+gammaLoglik <- function(x,class.ages,shape,mean){
 	# log likelihood under any Gamma distribution 
 	# converts the continuous PDF of any Gamma distribution into discrete probabilities (a multinomial probability distribution) for each age class
 	# column names of 'x' and 'class.ages' must match, ie the classes (or multi-classes) must be the same
 
-	# x: data.frame of all possible counts in each age class for which likelihoods are to be calculated and summed. Ie, the output of all.arrangements()
+	# x: data.frame of all possible counts in each age class for which likelihoods are to be calculated and summed. Ie, the output of allArrangements()
 	# class.ages: a one row data.frame of the starting age of each age class or multiclass
 	# These must be sequential, such that the start of the (n+1)th class equals the end of the nth class.
 	# The final age class will automatically include all counts above this. The first starting age therefore must be zero. 
@@ -241,18 +256,18 @@ gamma.loglik <- function(x,class.ages,shape,mean){
 	if(is.infinite(loglik))loglik <- -99999
 return(loglik)}
 #-----------------------------------------------------------------------------------------------------------
-multinomial.loglik <- function(x,p){
+multinomialLoglik <- function(x,p){
 	# calculates the log likelihood under any multinomial distribution
 	# column names of 'x' and 'p' must match, ie the classes (or multi-classes) must be the same
 
-	# x: data.frame of all possible arrnagements of counts in each age class for which likelihoods are to be calculated and summed. Ie, the output of all.arrangements()
+	# x: data.frame of all possible arrnagements of counts in each age class for which likelihoods are to be calculated and summed. Ie, the output of allArrangements()
 	# p: a one row data.frame of model probabilites in the (multi-class) age classes. 
 
 	if(!identical(names(x),names(p)))warning("The class names of 'x' and 'p' must match")
 	loglik <- log(sum(apply(x, 1, dmultinom, prob=as.numeric(p), log=FALSE)))
 return(loglik)}
 #-----------------------------------------------------------------------------------------------------------
-proposal.function <- function(params,size=0.4){
+proposalFunction <- function(params,size=0.4){
 	# helper function for MCMC
 	# params: vector or two values representing the 'shape' and 'mean' parameters of the gamma distribution
 	# size: hyperparameter controlling the size of the next random jump. May require tuning: smaller jumps result in a higher acceptance ratio (AR). Aim for AR between 0.2 and 0.6
@@ -267,15 +282,15 @@ mcmc <- function(counts, class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H
 	# Markov Chain Monte Carlo. Generates a single chain of Gamma parameters (shape and mean) for some observed multi-class assignments
 	# Returns the matrix of Gamma parameters after thinning and removing burn-in
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
-	# class.ages: a one row data.frame of the starting age of each age class. See gamma.loglik()
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
+	# class.ages: a one row data.frame of the starting age of each age class. See gammaLoglik()
 	# N: number of samples in the chain
 	# burn: number of initial burn in samples to discard
 	# thin: proportion of samples to discard. I.e. 5 = every 5th sample in the chain is retained.
 
-	check.counts.format(counts)
-	aa <- all.arrangements(counts)
-	ca <- convert.class.ages(class.ages,names(aa))
+	if(checkCountsFormat(counts)!='OK')stop()
+	aa <- allArrangements(counts)
+	ca <- convertClassAges(class.ages,names(aa))
 
 	# initiate random Gamma parameters, between 0 and 5
 	params <- runif(2,0,5)
@@ -285,9 +300,9 @@ mcmc <- function(counts, class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H
 	accepted <- rep(0,N)
 	for(n in 1:N){
 		all.params[n,] <- params
-		llik <- gamma.loglik(aa,ca,params[1],params[2])
-		prop.params <- proposal.function(params)
-		prop.llik <- gamma.loglik(aa,ca,prop.params[1],prop.params[2])
+		llik <- gammaLoglik(aa,ca,params[1],params[2])
+		prop.params <- proposalFunction(params)
+		prop.llik <- gammaLoglik(aa,ca,prop.params[1],prop.params[2])
 		ratio <- min(exp(prop.llik-llik),1)
 		move <- sample(c(T,F),size=1,prob=c(ratio,1-ratio))
 		if(move){
@@ -319,48 +334,48 @@ mcmc <- function(counts, class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H
 
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
-gamma.ML.parameters <- function(counts,class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H=6,I=8),trace=F){
+gammaMLparameters <- function(counts,class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H=6,I=8),trace=F){
 	# Search for the Maximum Likelihood Gamma parameters that fit any multi-class counts, using DEoptimR
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
-	# class.ages: a one row data.frame of the starting age of each age class. See gamma.loglik()
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
+	# class.ages: a one row data.frame of the starting age of each age class. See gammaLoglik()
 
-	check.counts.format(counts)
-	aa <- all.arrangements(counts)
-	class.ages <- convert.class.ages(class.ages,names(aa))
+	if(checkCountsFormat(counts)!='OK')stop()
+	aa <- allArrangements(counts)
+	class.ages <- convertClassAges(class.ages,names(aa))
 
-	fn <- function(x,aa,class.ages){-gamma.loglik(aa,class.ages,x[1],x[2])}
+	fn <- function(x,aa,class.ages){-gammaLoglik(aa,class.ages,x[1],x[2])}
 	res <- JDEoptim(lower=c(0,0),upper=c(20,20),fn=fn,aa=aa,class.ages=class.ages,tol=1e-7,NP=10,trace=trace)
 return(round(res$par,3))}
 #-----------------------------------------------------------------------------------------------------------
-gamma.log.MLE <- function(counts,class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H=6,I=8),trace=F){
+gammaLogMLE <- function(counts,class.ages=data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H=6,I=8),trace=F){
 	# Search for the log Maximum Likelihood Estimate under the best fitting Gamma
-	# Uses exactly the same algorithm as gamma.ML.parameters()
+	# Uses exactly the same algorithm as gammaMLparameters()
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
-	# class.ages: a one row data.frame of the starting age of each age class. See gamma.loglik()
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
+	# class.ages: a one row data.frame of the starting age of each age class. See gammaLoglik()
 
-	check.counts.format(counts)
-	aa <- all.arrangements(counts)
-	class.ages <- convert.class.ages(class.ages,names(aa))
+	if(checkCountsFormat(counts)!='OK')stop()
+	aa <- allArrangements(counts)
+	class.ages <- convertClassAges(class.ages,names(aa))
 
-	fn <- function(x,aa,class.ages){-gamma.loglik(aa,class.ages,x[1],x[2])}
+	fn <- function(x,aa,class.ages){-gammaLoglik(aa,class.ages,x[1],x[2])}
 	res <- JDEoptim(lower=c(0,0),upper=c(20,20),fn=fn,aa=aa,class.ages=class.ages,tol=1e-7,NP=10,trace=trace)
 return(-res$value)}
 #-----------------------------------------------------------------------------------------------------------
-multinomial.ML.parameters <- function(counts,N=100,I=30,C=2){
+multinomialMLparameters <- function(counts,N=100,I=30,C=2){
 	# Search for the Maximum Likelihood multinomial parameters (probabilities)
 	# Search performed using Simulated Annealing to sample the Dirichlet simplex, since a required constraint is that the parameters sum to 1
 	# Although column sums of 'aa' (normalised for unity) gives a very rough approximation of the MLE, it is incorrect since 'aa' provides all possible arrangements, but not the frequencies of each arrangement.
 	# Instead, this function properly sums the likelihoods across all possible arrangements.
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
 	# N: pop size
 	# I: iterations
 	# C: cooling: annealing schedule
 
-	check.counts.format(counts)
-	aa <- all.arrangements(counts)
+	if(checkCountsFormat(counts)!='OK')stop()
+	aa <- allArrangements(counts)
 	R <- ncol(aa)
 
 	# first iteration
@@ -380,17 +395,17 @@ multinomial.ML.parameters <- function(counts,N=100,I=30,C=2){
 	res <- as.data.frame(matrix(round(keep.pars,4),1,R));names(res) <- names(counts) 
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
-multinomial.log.MLE <- function(counts,N=100,I=30,C=2){
+multinomialLogMLE <- function(counts,N=100,I=30,C=2){
 	# Search for the log Maximum Likelihood Estimate under the best fitting Multinomial
-	# Uses exactly the same algorithm as multinomial.ML.parameters()
+	# Uses exactly the same algorithm as multinomialMLparameters()
 
-	# counts: a one row data.frame satisfying the requirements of check.counts.format(). I.e, handles just one dataset at a time.
+	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
 	# N: pop size
 	# I: iterations
 	# C: cooling: annealing schedule
 
-	check.counts.format(counts)
-	aa <- all.arrangements(counts)
+	if(checkCountsFormat(counts)!='OK')stop()
+	aa <- allArrangements(counts)
 	R <- ncol(aa)
 
 	# first iteration

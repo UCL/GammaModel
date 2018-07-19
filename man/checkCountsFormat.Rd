@@ -1,0 +1,31 @@
+\name{checkCountsFormat} 
+\alias{checkCountsFormat} 
+\title{GammaModel::checkCountsFormat} 
+\usage{checkCountsFormat(counts)}
+\arguments{
+  \item{counts}{A one-row data.frame comprising integer counts, with column names in capital letters}
+}
+\value{The string 'OK' is returned if no errors are found. Otherwise a string stating the number of errors.}
+\description{Helper function to check counts is in the required format}
+\details{Performs a few basic checks to ensure the raw counts data is formatted as required: 
+- a one-row data frame comprising column names of age classes (or multi-classes) in capital letters from 'A'. For example, Payne's 1973 caprine age classes are 'A','B','C','D','E','F','G','H',and 'I'. However, it is more likely that the raw counts will include some multi-class assignments, for example 'ABCD', 'A', 'AB', 'B', 'BC' etc. Order does not matter. 
+- Row name is unconstrained, but typically specifies the name of the data, e.g. the site/phase or any other ID. 
+- Raw counts must by definition be integers
+- Outputs warnings of any formatting problems}
+\examples{
+# load the raw data counts for all ten Neolithic sites
+data(Neolithic)
+
+# select the 'TRA1' subset
+counts <- Neolithic['TRA1',]
+
+# eyeball data
+print(counts)
+
+# check format
+checkCountsFormat(counts)
+
+# change to a non-integer count
+mistake <- counts
+mistake[3] <- 2.5
+checkCountsFormat(mistake)}
