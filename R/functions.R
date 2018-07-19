@@ -1,7 +1,6 @@
 #-----------------------------------------------------------------------------------------------------------
 # All functions required for analysis
 #-----------------------------------------------------------------------------------------------------------
-require(gtools)
 require(dplyr)
 require(combinat)
 require(DEoptimR)
@@ -32,7 +31,7 @@ check.counts.format <- function(counts){
 	# check col names are capital letters
 	letters <- unique(strsplit(paste(names(counts),collapse=''),split='')[[1]])
 	if(sum(!letters%in%LETTERS)!=0) stop("Column names of raw count data must comprise only capital letters, eg 'EFG' or 'E' ")
-	}
+return('OK')}
 #-----------------------------------------------------------------------------------------------------------
 unique.class.maker <- function(x){
 	# memory demands can be reduced hugely by retaining a multiclass that ALWAYS (every row of 'counts') have counts combined 
