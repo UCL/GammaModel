@@ -6,17 +6,19 @@
   \item{counts}{A one-row data.frame comprising integer counts, with column names in capital letters}
 }
 \value{The string 'OK' is returned if no errors are found. Otherwise a string stating the number of errors.}
-\references{Kill-off Patterns in Sheep and Goats: The Mandibles from Asvan Kale. Payne 1973. 303http://www.jstor.org/stable/3642547}
+\references{Kill-off Patterns in Sheep and Goats: The Mandibles from Asvan Kale. Payne 1973. 
+
+http://www.jstor.org/stable/3642547}
 \description{Helper function to check counts is in the required format}
-\details{Performs a few basic checks to ensure the raw counts data is formatted as required: 
+\details{Performs a few basic checks to ensure the raw count data are formatted as required: 
 
-- a one-row data frame comprising column names of age classes (or multi-classes) in capital letters from 'A'. For example, Payne's 1973 caprine age classes are 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', and 'I'. However, it is more likely that the raw counts will include some multi-class assignments, for example 'ABCD', 'A', 'AB', 'B', 'BC' etc. Order does not matter.
+A one-row data frame comprising column names of age classes (or multi-classes) in capital letters from 'A'. For example, Payne's 1973 caprine age classes are 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', and 'I'. However, it is more likely that the raw counts will include some multi-class assignments, for example 'ABCD', 'A', 'AB', 'B', 'BC' etc. Order does not matter.
 
-- Row name is unconstrained, but typically specifies the name of the data, e.g. the site/phase or any other ID.
+Row names are unconstrained. In the 'Neolithic' dataset provided, these specify the site codes.
 
-- Raw counts must by definition be integers.
+Raw counts must by definition be integers.
 
-- Outputs warnings of any formatting problems}
+Function outputs warnings of any formatting problems}
 \examples{
 # load the raw data counts for all ten Neolithic sites
 data(Neolithic)
