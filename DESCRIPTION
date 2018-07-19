@@ -8,4 +8,4 @@ Description: Tools to model age-at-death count data using the Gamma distribution
 Imports: dplyr, combinat, DEoptimR
 Depends: R (>= 3.0.1)
 Suggests: scales, LaplacesDemon
-License: GPL-2 
+License: GPL-3 
