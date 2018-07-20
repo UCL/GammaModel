@@ -4,13 +4,11 @@ export(allArrangements)
 export(GOF)
 export(mcmc)
 
-export(gammaLoglik)
 export(gammaLogMLE)
 export(gammaMLparameters)
 
-export(multinomialLoglik)
-export(multinomialLogMLE)
-export(multinomialMLparameters)
+export(multiClassLogMLE)
+export(multiClassMLparameters)
 
 importFrom(dplyr, distinct)
 importFrom(combinat, xsimplex)
