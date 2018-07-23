@@ -327,8 +327,8 @@ gammaLogMLE <- function(counts, class.ages = NULL, trace = FALSE){
 	res <- gammaSearch(counts,class.ages,trace)
 return(-res$value)}
 #-----------------------------------------------------------------------------------------------------------
-multiClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
-	# Search for the Maximum Likelihood multinomial parameters (probabilities)
+multiClassSearch <- function(counts, N, I, C){
+	# Search used by both multiClassMLparameters() and multiClassLogMLE()
 	# Search performed using Simulated Annealing to sample the Dirichlet simplex, since a required constraint is that the parameters sum to 1
 	# Although column sums of 'aa' (normalised for unity) gives a very rough approximation of the MLE, it is incorrect since 'aa' provides all possible arrangements, but not the frequencies of each arrangement.
 	# Instead, this function properly sums the likelihoods across all possible arrangements.
@@ -356,36 +356,18 @@ multiClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
 		keep.pars <- pars[liks==max(liks),,drop=F]	
 		}
 
-	res <- as.data.frame(matrix(round(keep.pars,4),1,R));names(res) <- names(counts) 
+	pars <- as.data.frame(matrix(round(keep.pars,4),1,R));names(pars) <- names(aa) 
+return(list(pars=pars,liks=liks))}
+#-----------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+multiClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
+	# Search for the Maximum Likelihood multinomial parameters (probabilities)
+	res <- multiClassSearch(counts, N, I, C)$pars
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
 multiClassLogMLE <- function(counts, N = 100, I = 30, C = 2){
 	# Search for the log Maximum Likelihood Estimate under the best fitting Multinomial
-	# Uses exactly the same algorithm as multiClassMLparameters()
-
-	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
-	# N: pop size
-	# I: iterations
-	# C: cooling: annealing schedule
-
-	if(checkCountsFormat(counts)!='OK')stop()
-	aa <- allArrangements(counts)
-	R <- ncol(aa)
-
-	# first iteration
-	liks <- numeric(N)
-	pars <- rdirichlet(N,rep(1,R))
-	for(n in 1:N)liks[n] <- log(sum(apply(aa, 1, dmultinom, prob=as.numeric(pars[n,]), log=FALSE)))
-	keep.pars <- pars[liks==max(liks),,drop=F]
-
-	# subsequent iterations
-	for(i in 1:I){
-		liks <- numeric(N+1)
-		pars <- rbind(keep.pars,rdirichlet(N,rep(0.1,R)+keep.pars*(C^i)))
-		for(n in 1:(N+1))liks[n] <- log(sum(apply(aa, 1, dmultinom, prob=as.numeric(pars[n,]), log=FALSE)))
-		keep.pars <- pars[liks==max(liks),,drop=F]	
-		}
-
+	liks <- multiClassSearch(counts, N, I, C)$liks
 	res <- max(liks)
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
