@@ -25,7 +25,7 @@
 	\code{\link{multiClassLogMLE}}
 	}
 \references{
-	Rastrigin, L.A. (1963). "The convergence of the random 	search method in the extremal control of a many parameter 	system. Automation and Remote Control. 24 (10):1337–1342
+	Rastrigin, L.A. (1963). "The convergence of the random 	search method in the extremal control of a many parameter 	system. Automation and Remote Control. 24 (10): 1337-1342
 	}
 \description{
 	Finds the Maximum Likelihood Age-class parameters given some 	age-class count data.
