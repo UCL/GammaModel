@@ -2,7 +2,7 @@
 \alias{mcmc} 
 \title{GammaModel::mcmc} 
 \usage{
-	mcmc(counts, class.ages = NULL, N = 30000, burn = 2000, 	thin = 5, prop = 0.4, plot.chain = TRUE)
+	mcmc(counts, class.ages = NULL, N = 30000, burn = 2000, thin = 5, prop = 0.4, plot.chain = TRUE)
 	}
 \arguments{
   \item{counts}{

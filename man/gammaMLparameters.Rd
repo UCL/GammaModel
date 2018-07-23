@@ -2,7 +2,7 @@
 \alias{gammaMLparameters} 
 \title{GammaModel::gammaMLparameters} 
 \usage{
-	gammaMLparameters(counts, class.ages = NULL, trace = 	FALSE)
+	gammaMLparameters(counts, class.ages = NULL, trace = FALSE)
 	}
 \arguments{
   \item{counts}{
