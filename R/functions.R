@@ -4,7 +4,6 @@
 require(dplyr)
 require(combinat)
 require(DEoptimR)
-require(scales)
 require(LaplacesDemon)
 #-----------------------------------------------------------------------------------------------------------
 checkCountsFormat <- function(counts){
@@ -329,11 +328,6 @@ return(-res$value)}
 #-----------------------------------------------------------------------------------------------------------
 multiClassSearch <- function(counts, N, I, C){
 	# Search used by both multiClassMLparameters() and multiClassLogMLE()
-	# Search performed using Simulated Annealing to sample the Dirichlet simplex, since a required constraint is that the parameters sum to 1
-	# Although column sums of 'aa' (normalised for unity) gives a very rough approximation of the MLE, it is incorrect since 'aa' provides all possible arrangements, but not the frequencies of each arrangement.
-	# Instead, this function properly sums the likelihoods across all possible arrangements.
-
-	# counts: a one row data.frame satisfying the requirements of checkCountsFormat(). I.e, handles just one dataset at a time.
 	# N: pop size
 	# I: iterations
 	# C: cooling: annealing schedule
@@ -359,7 +353,6 @@ multiClassSearch <- function(counts, N, I, C){
 	pars <- as.data.frame(matrix(round(keep.pars,4),1,R));names(pars) <- names(aa) 
 return(list(pars=pars,liks=liks))}
 #-----------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------
 multiClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
 	# Search for the Maximum Likelihood multinomial parameters (probabilities)
 	res <- multiClassSearch(counts, N, I, C)$pars
@@ -372,9 +365,7 @@ multiClassLogMLE <- function(counts, N = 100, I = 30, C = 2){
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
 # to do......
-# Need to create a single common function for multiClassMLparameters and multiClassLogMLE as I did with Gamma...
-# split the functions
-# create .Rd manuals for both
+
 # write Vignette, which needs to be much prettier. Include instructions on how to install from github. Also include these instructions on the main github readme
 # store tarball, vignette and pdf manual on github
 # Complete corrections to paper (new results waiting on  Myriad)
