@@ -345,7 +345,7 @@ multiClassSearch <- function(counts, N, I, C){
 	# subsequent iterations
 	for(i in 1:I){
 		liks <- numeric(N+1)
-		pars <- rbind(keep.pars,rdirichlet(N,rep(0.1,R)+keep.pars*(C^i)))
+		pars <- rbind(keep.pars,rdirichlet(N,rep(1,R)+keep.pars*(C^i)))
 		for(n in 1:(N+1))liks[n] <- log(sum(apply(aa, 1, dmultinom, prob=as.numeric(pars[n,]), log=FALSE)))
 		keep.pars <- pars[liks==max(liks),,drop=F]	
 		}

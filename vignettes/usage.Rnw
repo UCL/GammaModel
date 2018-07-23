@@ -1,0 +1,22 @@
+\documentclass[a4paper]{article}
+
+\def\GammaModel{\textsc{GammaModel}}
+\usepackage{fullpage} 
+
+%\VignetteIndexEntry{Guide to using GammaModel}
+\title{Using the 'GammaModel' package to model age-at-death counts using the Gamma distribution}
+\author{Adrian Timpson}
+
+\begin{document}
+\maketitle
+
+This vignette provides a guide to using the R package GammaModel, which was created to perform the analysis in the 2018 Journal of Archaeological Science paper 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E Gillis, Katie Manning and Mark G Thomas. It assumes the user has some basic familiarity with programming in R.
+
+\section{Installation}
+The GammaModel package can be installed directly from GitHub then loaded in the usual way:
+
+
+
+
+
+\end{document}
