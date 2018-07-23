@@ -5,27 +5,27 @@
 	multiClassMLparameters(counts, N = 100, I = 30, C = 2)
 	}
 \arguments{
-  \item{counts}{
-	A one-row data frame comprising integer counts, with 	column names in capital letters.  Formatting requirements 	detailed in \code{\link{checkCountsFormat}}.
-	}
+	\item{counts}{
+		A one-row data frame comprising integer counts, with 		column names in capital letters. Formatting 			requirements detailed in 				\code{\link{checkCountsFormat}}.
+		}
   \item{N}{
-	An integer specifying the population size of particles in each iteration.
-	}
+		An integer specifying the population size of 			particles in each iteration.
+		}
   \item{I}{
-	An integer specifying the number of iterations.
-	}
+		An integer specifying the number of iterations.
+		}
   \item{C}{
-	A numeric value greater than 1, average parameter jump 	size.
+		A numeric value greater than 1, average parameter 		jump 	size.
+		}
 	}
-}
 \value{
 	A two value numeric vector, giving the estimated 	parameter values.
 	}
 \seealso{
 	\code{\link{multiClassLogMLE}}
-}
+	}
 \references{
-	Rastrigin, L.A. (1963). "The convergence of the random 	search method in the extremal control of a many parameter 	system". Automation and Remote Control. 24 (10):1337–1342
+	Rastrigin, L.A. (1963). "The convergence of the random 	search method in the extremal control of a many parameter 	system. Automation and Remote Control. 24 (10):1337–1342
 	}
 \description{
 	Finds the Maximum Likelihood Age-class parameters given some 	age-class count data.
