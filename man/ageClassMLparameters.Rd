@@ -2,7 +2,7 @@
 \alias{ageClassMLparameters} 
 \title{GammaModel::ageClassMLparameters} 
 \usage{
-	ageClassMLparameters(counts, N = 100, I = 30, C = 2)
+	ageClassMLparameters(counts, N = 200, I = 40, C = 2)
 	}
 \arguments{
 	\item{counts}{

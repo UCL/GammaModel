@@ -2,7 +2,7 @@
 \alias{ageClassLogMLE} 
 \title{GammaModel::ageClassLogMLE} 
 \usage{
-	ageClassLogMLE(counts, N = 100, I = 30, C = 2)
+	ageClassLogMLE(counts, N = 200, I = 40, C = 2)
 	}
 \arguments{
   \item{counts}{

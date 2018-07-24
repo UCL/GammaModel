@@ -342,12 +342,12 @@ ageClassSearch <- function(counts, N, I, C){
 	pars <- as.data.frame(matrix(round(keep.pars,4),1,R));names(pars) <- names(aa) 
 return(list(pars=pars,liks=liks))}
 #-----------------------------------------------------------------------------------------------------------
-ageClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
+ageClassMLparameters <- function(counts, N = 200, I = 40, C = 2){
 	# Search for the Maximum Likelihood multinomial parameters (probabilities)
 	res <- ageClassSearch(counts, N, I, C)$pars
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
-ageClassLogMLE <- function(counts, N = 100, I = 30, C = 2){
+ageClassLogMLE <- function(counts, N = 200, I = 40, C = 2){
 	# Search for the log Maximum Likelihood Estimate under the best fitting Multinomial
 	liks <- ageClassSearch(counts, N, I, C)$liks
 	res <- max(liks)
