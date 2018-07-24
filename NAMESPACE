@@ -7,8 +7,8 @@ export(mcmc)
 export(gammaLogMLE)
 export(gammaMLparameters)
 
-export(multiClassLogMLE)
-export(multiClassMLparameters)
+export(ageClassLogMLE)
+export(ageClassMLparameters)
 
 importFrom(dplyr, distinct)
 importFrom(combinat, xsimplex)

@@ -227,18 +227,6 @@ gammaLoglik <- function(x, class.ages, shape, mean){
 	if(is.infinite(loglik))loglik <- -99999
 return(loglik)}
 #-----------------------------------------------------------------------------------------------------------
-#multinomialLoglik <- function(x,p){
-#completely scrap now
-	# calculates the log likelihood under any multinomial distribution
-	# column names of 'x' and 'p' must match, ie the classes (or multi-classes) must be the same
-
-	# x: data.frame of all possible arrangements of counts in each age class for which likelihoods are to be calculated and summed. Ie, the output of allArrangements()
-	# p: a one row data.frame of model probabilites in the (multi-class) age classes. 
-
-#	if(!identical(names(x),names(p)))warning("The class names of 'x' and 'p' must match")
-#	loglik <- log(sum(apply(x, 1, dmultinom, prob=as.numeric(p), log=FALSE)))
-#return(loglik)}
-#-----------------------------------------------------------------------------------------------------------
 proposalFunction <- function(params, prop){
 	# helper function for MCMC
 	# params: vector or two values representing the 'shape' and 'mean' parameters of the gamma distribution
@@ -326,8 +314,8 @@ gammaLogMLE <- function(counts, class.ages = NULL, trace = FALSE){
 	res <- gammaSearch(counts,class.ages,trace)
 return(-res$value)}
 #-----------------------------------------------------------------------------------------------------------
-multiClassSearch <- function(counts, N, I, C){
-	# Search used by both multiClassMLparameters() and multiClassLogMLE()
+ageClassSearch <- function(counts, N, I, C){
+	# Search used by both ageClassMLparameters() and ageClassLogMLE()
 	# N: pop size
 	# I: iterations
 	# C: cooling: annealing schedule
@@ -353,14 +341,14 @@ multiClassSearch <- function(counts, N, I, C){
 	pars <- as.data.frame(matrix(round(keep.pars,4),1,R));names(pars) <- names(aa) 
 return(list(pars=pars,liks=liks))}
 #-----------------------------------------------------------------------------------------------------------
-multiClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
+ageClassMLparameters <- function(counts, N = 100, I = 30, C = 2){
 	# Search for the Maximum Likelihood multinomial parameters (probabilities)
-	res <- multiClassSearch(counts, N, I, C)$pars
+	res <- ageClassSearch(counts, N, I, C)$pars
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
-multiClassLogMLE <- function(counts, N = 100, I = 30, C = 2){
+ageClassLogMLE <- function(counts, N = 100, I = 30, C = 2){
 	# Search for the log Maximum Likelihood Estimate under the best fitting Multinomial
-	liks <- multiClassSearch(counts, N, I, C)$liks
+	liks <- ageClassSearch(counts, N, I, C)$liks
 	res <- max(liks)
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
