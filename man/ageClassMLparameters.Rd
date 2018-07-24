@@ -1,8 +1,8 @@
-\name{multiClassMLparameters} 
-\alias{multiClassMLparameters} 
-\title{GammaModel::multiClassMLparameters} 
+\name{ageClassMLparameters} 
+\alias{ageClassMLparameters} 
+\title{GammaModel::ageClassMLparameters} 
 \usage{
-	multiClassMLparameters(counts, N = 100, I = 30, C = 2)
+	ageClassMLparameters(counts, N = 100, I = 30, C = 2)
 	}
 \arguments{
 	\item{counts}{
@@ -22,7 +22,7 @@
 	A two value numeric vector, giving the estimated 	parameter values.
 	}
 \seealso{
-	\code{\link{multiClassLogMLE}}
+	\code{\link{ageClassLogMLE}}
 	}
 \references{
 	Rastrigin, L.A. (1963). "The convergence of the random 	search method in the extremal control of a many parameter 	system. Automation and Remote Control. 24 (10): 1337-1342
@@ -38,5 +38,5 @@ A search for the MLE is constrained by the fact we are searching for a vector of
     # using the default Payne caprine age classes.
     data(Neolithic)
     counts <- Neolithic['TRA1',]
-    multiClassMLparameters(counts)
+    ageClassMLparameters(counts)
 	}

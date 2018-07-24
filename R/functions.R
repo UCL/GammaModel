@@ -306,7 +306,8 @@ gammaMLparameters <- function(counts, class.ages = NULL, trace = FALSE){
 	# Search for the Maximum Likelihood Gamma parameters
 	if(is.null(class.ages))class.ages <- data.frame(A=0,B=1/6,C=1/2,D=1,E=2,F=3,G=4,H=6,I=8)
 	res <- gammaSearch(counts,class.ages,trace)
-return(round(res$par,3))}
+	x <- data.frame(shape=round(res$par[1],3),mean=round(res$par[2],3))
+return(x)}
 #-----------------------------------------------------------------------------------------------------------
 gammaLogMLE <- function(counts, class.ages = NULL, trace = FALSE){
 	# Search for the log Maximum Likelihood Estimate

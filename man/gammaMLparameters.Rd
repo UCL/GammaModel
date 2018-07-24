@@ -14,7 +14,7 @@
 	}
 }
 \value{
-	Two value numeric giving the estimated Gamma parameters 	('shape' and 'mean')
+	Data frame giving the estimated Gamma parameters 	('shape' and 'mean')
 	}
 \seealso{
 	\code{\link[DEoptimR]{JDEoptim}}

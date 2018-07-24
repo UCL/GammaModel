@@ -1,8 +1,8 @@
-\name{multiClassLogMLE} 
-\alias{multiClassLogMLE} 
-\title{GammaModel::multiClassLogMLE} 
+\name{ageClassLogMLE} 
+\alias{ageClassLogMLE} 
+\title{GammaModel::ageClassLogMLE} 
 \usage{
-	multiClassLogMLE(counts, N = 100, I = 30, C = 2)
+	ageClassLogMLE(counts, N = 100, I = 30, C = 2)
 	}
 \arguments{
   \item{counts}{
@@ -22,7 +22,7 @@
 	A single numeric, giving the Maximum Likelihood Estimate.
 	}
 \seealso{
-	\code{\link{multiClassMLparameters}}
+	\code{\link{ageClassMLparameters}}
 }
 \references{
 	Rastrigin, L.A. (1963). The convergence of the random 	search method in the extremal control of a many parameter 	system. Automation and Remote Control. 24 (10): 1337-1342
@@ -38,5 +38,5 @@ A search for the MLE is constrained by the fact we are searching for a vector of
     # using the default Payne caprine age classes.
     data(Neolithic)
     counts <- Neolithic['TRA1',]
-    multiClassLogMLE(counts)
+    ageClassLogMLE(counts)
 	}
