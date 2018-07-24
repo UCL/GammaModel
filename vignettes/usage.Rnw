@@ -27,26 +27,79 @@ help(GammaModel)
 
 \section{Age-at-death data}
 Age-at-death data are typically integer counts of teeth that fall into discrete age classes. However, due to varying archaeological preservation the age of some samples are less precise and therefore are assigned to several possible age classes. An age-at-death dataset of 10 European Neolithic sites can be loaded and inspected by typing:
-<<data, eval=FALSE>>=
+<<data, eval=TRUE>>=
+library(GammaModel)
 data(Neolithic)
 print(Neolithic)
+@
+Further information about the dataset can be found by typing:
+<<data, eval=FALSE>>=
 help(Neolithic)
 @
-Notice for example site 'PPI' has two counts in the multi-class BC. Crucially, this is not equivalent to 1 count in B and 1 count in C. Instead, BC=2 is equivalent to (B=1 and C=1) or (B=2 and C=0) or (B=0 and C=2). 
-
-Therefore a key component in calculating the probability of the data given any proposed model is to first generate all possible arrangements of the age-at-death counts. This can be achieved as follows:
-<<data, eval=FALSE>>=
+Notice for example site 'PPI' has two counts in the multi-class BC. Crucially, this is not equivalent to 1 count in B and 1 count in C. Instead, BC=2 is equivalent to (B=1 and C=1) or (B=2 and C=0) or (B=0 and C=2).  Therefore a key component in calculating the probability of the data given any proposed model is to first generate all possible arrangements of the age-at-death counts, using the allArrangements() function. Notice counts in classes E and F are automatically combined into a multi-class EF, since there were no counts in the raw data that were assigned to only E or F. 
+<<data, eval=TRUE>>=
+library(GammaModel)
 data(Neolithic)
 counts <- Neolithic['PPI',]
-allArrangements(counts)
-@
-Notice the number of combinations can become huge if there are many multi-class assignments, which can generate large memory demands:
-<<data, eval=FALSE>>=
-data(Neolithic)
-x <- allArrangements(Neolithic['TRA2',]) 
-nrow(x)
+aa <- allArrangements(counts)
+print(aa)
 @
 
+The number of combinations can become huge if there are many multi-class assignments, which can generate large memory demands:
+<<data, eval=TRUE>>=
+library(GammaModel)
+data(Neolithic)
+counts <- Neolithic['TRA2',]
+x <- allArrangements(counts) 
+print(counts)
+print(nrow(x))
+@
+
+\section{Goodness of Fit (GOF)}
+The GammaModel package also provides a number of age-class models, each of which is described by the probability of death occuring in age classes A-I as follows: 
+
+<<gof, echo=FALSE, eval=TRUE>>=
+tab <- data.frame(Class=LETTERS[1:9],
+	age=c('0 to 2 months',
+		'2 to 6 months',
+		'6 to 12 months',
+		'1 to 2 years',
+		'2 to 3 years',
+		'3 to 4 years',
+		'4 to 6 years',
+		'6 to 8 years',
+		'8 years or more'))
+print(tab, row.names=F)
+@
+
+These models can be loaded and viewed as follows:
+<<gof, eval=TRUE>>=
+# payne models
+data(models.payne)
+print(models.payne)
+
+# redding models
+data(models.redding)
+print(models.redding)
+@
+
+Further information about these model probabilities can be found by typing:
+<<gof, eval=FALSE>>=
+help(models.payne)
+help(models.redding)
+@
+
+A Goodness of Fit test (GOF) evaluates the probability of getting some observed data (or more extreme) under a particular model. This can be achieved using the GOF() function as follows:
+<<gof, eval=FALSE>>=
+data(Neolithic)
+data(models.payne)
+counts <- Neolithic['FON1',] 
+model <- models.payne['meat',]
+GOF(counts, model)
+@
+
+\section{Maximum Likelihood}
+Both the Maximum Likelihood Estimates (MLE) and the Maximum Likelihood parameter values can be calculated for either the Gamma model or the age-class model, for some given count data. Both require a search of parameter space, and this is achieved using a Differential Evolution stochastic algorithm for the Gamma model, and a Random Search algorithm for the age-class model.
 
 
 \end{document}
