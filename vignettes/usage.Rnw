@@ -1,16 +1,20 @@
-\documentclass[a4paper]{article}
-
-\def\GammaModel{\textsc{GammaModel}}
-\usepackage{fullpage} 
+\documentclass{article}
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Guide to using GammaModel}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=2cm,rmargin=2cm}
+\floatplacement{figure}{H}
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.pos='H', comment=NA)
+@
 \title{Using the 'GammaModel' package to model age-at-death counts using the Gamma distribution}
 \author{Adrian Timpson}
-
-\begin{document}
 \maketitle
 
-This vignette provides a guide to using the R package GammaModel, which was created to perform the analysis in the 2018 Journal of Archaeological Science paper 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E Gillis, Katie Manning and Mark G Thomas. It assumes the user has some basic familiarity with programming in R.
+This vignette provides a guide to using the R package GammaModel, which was created to perform the analysis in the paper 'Modelling caprine age-at-death profiles using the Gamma distribution', JAS 2018, A. Timpson et al. It assumes the user has some basic familiarity with programming in R.
 
 \section{Installation}
 The GammaModel package can be installed directly from GitHub, using the 'devtools' package on the CRAN. Invoke R then install and load devtools by typing:
@@ -27,7 +31,7 @@ help(GammaModel)
 
 \section{Age-at-death data}
 Age-at-death data are typically integer counts of teeth that fall into discrete age classes. However, due to varying archaeological preservation the age of some samples are less precise and therefore are assigned to several possible age classes. An age-at-death dataset of 10 European Neolithic sites can be loaded and inspected by typing:
-<<data1, eval=TRUE, comment=NA>>=
+<<data1, eval=TRUE>>=
 library(GammaModel)
 data(Neolithic)
 print(Neolithic)
@@ -37,7 +41,7 @@ Further information about the dataset can be found by typing:
 help(Neolithic)
 @
 Notice for example site 'PPI' has two counts in the multi-class BC. Crucially, this is not equivalent to 1 count in B and 1 count in C. Instead, BC=2 is equivalent to (B=1 and C=1) or (B=2 and C=0) or (B=0 and C=2).  Therefore a key component in calculating the probability of the data given any proposed model is to first generate all possible arrangements of the age-at-death counts, using the allArrangements() function. Notice counts in classes E and F are automatically combined into a multi-class EF, since there were no counts in the raw data that were assigned to only E or F. 
-<<data3, eval=TRUE, comment=NA>>=
+<<data3, eval=TRUE>>=
 library(GammaModel)
 data(Neolithic)
 counts <- Neolithic['PPI',]
@@ -46,7 +50,7 @@ print(aa)
 @
 
 The number of combinations can become huge if there are many multi-class assignments, which can generate large memory demands:
-<<data4, eval=TRUE, comment=NA>>=
+<<data4, eval=TRUE>>=
 library(GammaModel)
 data(Neolithic)
 counts <- Neolithic['TRA2',]
@@ -58,7 +62,7 @@ print(nrow(x))
 \section{Goodness of Fit (GOF)}
 The GammaModel package also provides several age-class models, each of which is described by the probability of death occuring in age classes A to I: 
 
-<<gof1, echo=FALSE, eval=TRUE, comment=NA>>=
+<<gof1, echo=FALSE, eval=TRUE>>=
 tab <- data.frame(Class=LETTERS[1:9],
 	age=c('0 to 2 months',
 		'2 to 6 months',
@@ -73,7 +77,7 @@ print(tab, row.names=F)
 @
 
 These models can be loaded and viewed as follows:
-<<gof2, eval=TRUE, comment=NA>>=
+<<gof2, eval=TRUE>>=
 # payne models
 data(models.payne)
 print(models.payne)
@@ -107,7 +111,8 @@ GOF(counts, model, N = 1000000)
 Both the Maximum Likelihood Estimates (MLE) and the Maximum Likelihood parameter values can be calculated for either the Gamma model or the age-class model, for some given count data. Both require a search of parameter space, and this is achieved using a Differential Evolution stochastic algorithm for the Gamma model, and a Random Search algorithm for the age-class model.
 
 \subsection{Age-class Maximum Likelihood}
-<<acml1, eval=TRUE, comment=NA>>=
+Notice in the example below, the most likely probability for age-class HI = 0 (to 4 d.p), despite the data having a count in multi-class EFGHI (which could come from HI). This illustrates the interactive influence of data in other age-classes. For example, the large number of counts in classes EF and G (12 and 10 respectively) mean that the single count in EFGHI is far more likely to have come from EF or G than from HI.
+<<acml1, eval=TRUE>>=
 data(Neolithic)
 counts <- Neolithic['TRA1',]
 MLpar <- ageClassMLparameters(counts)
@@ -116,24 +121,18 @@ print(counts) # raw data
 print(MLpar) # most likely model parameters (probabilities)
 print(MLE) # log maximum likelihood estimate
 @
-Notice the most likely probability for age-class HI = 0 (to 4 d.p), despite the data having a count in multi-class EFGHI (which could come from HI). This illustrates the interactive influence of data in other age-classes. For example, the large number of counts in classes EF and G (12 and 10 respectively) mean that the single count in EFGHI is far more likely to have come from EF or G than from HI.
 
 \subsection{Gamma Maximum Likelihood}
-<<gml1, eval=TRUE, comment=NA>>=
+Maximum Likelihood Gamma parameters 'shape' and 'mean' can be obtained. These can then be used to plot the full Gamma distribution using the dgamma() function. Notice this function requires 'shape' and 'rate' parameters, where rate = shape/mean.
+
+\begin{figure}
+<<gml1,eval=TRUE,fig.asp=0.7>>=
 data(Neolithic)
 counts <- Neolithic['TRA1',]
 MLpar <- gammaMLparameters(counts)
 MLE <- gammaLogMLE(counts)
 print(MLpar) # most likely model parameters
 print(MLE) # log maximum likelihood estimate
-@
-
-These model parameters can then be used to plot the full Gamma distribution using the dgamma() function. Notice this function requires 'shape' and 'rate' parameters, where rate = shape/mean.
-
-\begin{figure}
-<<gml2,fig.asp=0.6,eval=TRUE,comment=NA>>=
-# load data
-data(Neolithic) 
 
 # find ML parameters for three datasets
 p1 <- gammaMLparameters(Neolithic['TRA1',])
@@ -141,14 +140,13 @@ p2 <- gammaMLparameters(Neolithic['TES',])
 p3 <- gammaMLparameters(Neolithic['WIK',])
 
 # x-axis to cover 10 years
-x <- seq(0,10,length.out=1000)
+x <- seq(0,10,length.out=1000) 
 
 # full Gamma distributions
 y1 <- dgamma(x, p1$shape, p1$shape/p1$mean)
 y2 <- dgamma(x, p2$shape, p2$shape/p2$mean)
 y3 <- dgamma(x, p3$shape, p3$shape/p3$mean)
 
-# plot
 plot(NULL,xlim=c(0,10),ylim=c(0,0.4),xlab='age', ylab='probability density')
 lines(x,y1,col=1,lwd=2)
 lines(x,y2,col=2,lwd=2)
@@ -163,7 +161,7 @@ legend(x=8, y=0.3, bty='n', col=1:3, lwd=2, legend= c('TRA1','TES','WIK'))
 We can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc(), to show the full uncertainty due to small sample sizes and multi-class assignments.  By default, mcmc() will output a progress update for each 20 percent completion. At completion the Acceptance Ratio (AR) is printed, and the full MCMC chain is plotted.  Together these allow the user to check the chain is well mixed, and a 'hairy catepillar' appearance togther with an acceptance ratio of around 0.4 suggests an efficient search.   Otherwise, the total number of iterations can be increased from the default argument N =30,000, and the default prop = 0.4 can be reduced, ensuring smaller average jumps by the proposal function.
 
 \begin{figure}
-<<mcmc1,fig.asp=0.6,eval=TRUE,cache=TRUE,comment=NA>>=
+<<mcmc1,eval=TRUE,cache=TRUE>>=
 data(Neolithic) # load data
 counts <- Neolithic['TRA1',]
 pars <- mcmc(counts) # generate a MCMC chain
@@ -172,13 +170,14 @@ pars <- mcmc(counts) # generate a MCMC chain
 
 Each row of the returned data frame is a sample from the joint likelihood distribution, after burnin and thinning. This can be graphically represented in various ways. 
 \begin{figure}
-<<mcmc2,eval=TRUE,cache=TRUE,comment=NA,dependson='mcmc1'>>=
+<<mcmc2,eval=TRUE,cache=TRUE,dependson='mcmc1'>>=
 
 # plot the MCMC chain output
 plot(pars, pch='+',cex=0.5)
 
 # Add contour lines by first generating 2D kernels
-# Requires the library(ks) 
+# Requires the ks package
+library(ks) 
 H <- matrix(c(0.012, 0, 0, 0.012), 2, 2)
 fhat <- kde(x=pars, H=H)
 plot(fhat, drawlabels=T, lwd=2, lty=1, add=T, col='red')
@@ -188,7 +187,7 @@ plot(fhat, drawlabels=T, lwd=2, lty=1, add=T, col='red')
 Each sample from the MCMC chain is a pair of Gamma parameters that can be used to construct the full Gamma distribution, thus representing the uncertainty in the distribution directly, rather than via a graphic representation of the underlying parameters.
 
 \begin{figure}
-<<mcmc3,eval=TRUE,cache=TRUE,comment=NA,dependson='mcmc1'>>=
+<<mcmc3,eval=TRUE,cache=TRUE,dependson='mcmc1'>>=
 # calculate the 'rate' parameter for each sample
 pars$rate <- pars$shape / pars$mean
 
@@ -198,10 +197,11 @@ x <- seq(0,5,length.out=1000)
 # start with a blank plot
 plot(NULL, xlim=c(0,5), ylim=c(0,0.5), xlab='age', ylab='PD', main='TRA1')
 
-# add 1000 samples from the chain
-for(n in 1:1000){
+# add 2000 samples from the chain
+library(scales) # alpha function for transparency 
+for(n in 1:2000){
 	y <- dgamma(x, shape=pars$shape[n], rate=pars$rate[n])
-	lines(x,y,lwd=0.01)
+	lines(x,y,col=alpha('black',alpha=0.04))
 	}
 @
 \end{figure}
