@@ -13,9 +13,39 @@
 This vignette provides a guide to using the R package GammaModel, which was created to perform the analysis in the 2018 Journal of Archaeological Science paper 'Modelling caprine age-at-death profiles using the Gamma distribution' by Adrian Timpson, Rosalind E Gillis, Katie Manning and Mark G Thomas. It assumes the user has some basic familiarity with programming in R.
 
 \section{Installation}
-The GammaModel package can be installed directly from GitHub then loaded in the usual way:
+The GammaModel package can be installed directly from GitHub, using the 'devtools' package on the CRAN. Invoke R then install and load devtools by typing:
+<<install, eval=FALSE>>=
+install.packages('devtools')
+library(devtools)
+@
+The GammaModel package can then be installed and loaded, and a summary of the available help files and data sets included in the package can be browsed:
+<<install, eval=FALSE, tidy=TRUE, print=FALSE>>=
+install_github('UCL/GammaModel')
+library(GammaModel)
+help(GammaModel)
+@
 
+\section{Age-at-death data}
+Age-at-death data are typically integer counts of teeth that fall into discrete age classes. However, due to varying archaeological preservation the age of some samples are less precise and therefore are assigned to several possible age classes. An age-at-death dataset of 10 European Neolithic sites can be loaded and inspected by typing:
+<<data, eval=FALSE>>=
+data(Neolithic)
+print(Neolithic)
+help(Neolithic)
+@
+Notice for example site 'PPI' has two counts in the multi-class BC. Crucially, this is not equivalent to 1 count in B and 1 count in C. Instead, BC=2 is equivalent to (B=1 and C=1) or (B=2 and C=0) or (B=0 and C=2). 
 
+Therefore a key component in calculating the probability of the data given any proposed model is to first generate all possible arrangements of the age-at-death counts. This can be achieved as follows:
+<<data, eval=FALSE>>=
+data(Neolithic)
+counts <- Neolithic['PPI',]
+allArrangements(counts)
+@
+Notice the number of combinations can become huge if there are many multi-class assignments, which can generate large memory demands:
+<<data, eval=FALSE>>=
+data(Neolithic)
+x <- allArrangements(Neolithic['TRA2',]) 
+nrow(x)
+@
 
 
 
