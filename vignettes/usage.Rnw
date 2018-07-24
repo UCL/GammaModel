@@ -56,7 +56,7 @@ print(nrow(x))
 @
 
 \section{Goodness of Fit (GOF)}
-The GammaModel package also provides a number of age-class models, each of which is described by the probability of death occuring in age classes A to I as follows: 
+The GammaModel package also provides several age-class models, each of which is described by the probability of death occuring in age classes A to I: 
 
 <<gof1, echo=FALSE, eval=TRUE, comment=NA>>=
 tab <- data.frame(Class=LETTERS[1:9],
@@ -89,7 +89,7 @@ help(models.payne)
 help(models.redding)
 @
 
-A Goodness of Fit test (GOF) evaluates the probability of getting some observed data (or more extreme) under a particular model. This can be achieved using the GOF() function as follows:
+A Goodness of Fit test (GOF) evaluates how typical some observed data (or more extreme) is under a particular model. This can be achieved using the GOF() function as follows:
 <<gof4, eval=FALSE>>=
 data(Neolithic)
 data(models.payne)
@@ -98,7 +98,7 @@ model <- models.payne['meat',]
 GOF(counts, model)
 @
 
-P-values are estimated by sampling 10,000 arrangements of the data, but for improved precision this default value may be increased by changing the N argument:
+P-values are estimated by sampling 10,000 arrangements of the data, but for improved precision this default N argument value may be increased:
 <<gof5, eval=FALSE>>=
 GOF(counts, model, N = 1000000)
 @
@@ -116,7 +116,7 @@ print(counts) # raw data
 print(MLpar) # most likely model parameters (probabilities)
 print(MLE) # log maximum likelihood estimate
 @
-Notice the most likely probability for age-class HI = 0, despite the data having a count in multi-class EFGHI (which could come from HI). This illustrates the interactive influence of data in other age-classes. For example, the large number of counts in classes EF and G (12 and 10 respectively) mean that the single count in EFGHI is far more likely to have come from EF or G than from HI.
+Notice the most likely probability for age-class HI = 0 (to 4 d.p), despite the data having a count in multi-class EFGHI (which could come from HI). This illustrates the interactive influence of data in other age-classes. For example, the large number of counts in classes EF and G (12 and 10 respectively) mean that the single count in EFGHI is far more likely to have come from EF or G than from HI.
 
 \subsection{Gamma Maximum Likelihood}
 <<gml1, eval=TRUE, comment=NA>>=
@@ -158,6 +158,9 @@ lines(x,y3,col=3,lwd=2)
 legend(x=8, y=0.3, bty='n', col=1:3, lwd=2, legend= c('TRA','TES','WIK'))
 @
 \end{figure}
+
+\section{Gamma likelihood distribution}
+Whilst the Maximum Likelihood provides the single (most likely) point estimate for the Gamma parameters, these parameter values to not reflect the uncertainty due to both small sample sizes, and multi-class assignments. Instead, we can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc().
 
 \end{document}
 
