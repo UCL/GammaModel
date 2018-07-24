@@ -28,7 +28,7 @@
 	}
 }
 \value{
-	Numeric Matrix of two columns, giving the Gamma 	parameters ('shape' and 'mean') sampled from the chain, 	after burn-in and thinning.
+	Data frame of two columns, giving the Gamma 	parameters ('shape' and 'mean') sampled from the chain, 	after burn-in and thinning.
 	}
 \references{
 	Hastings, W.K., 1970. Monte Carlo sampling methods using 	Markov chains and their applications, Biometrika 57, 	97-109.

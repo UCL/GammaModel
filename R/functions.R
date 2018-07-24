@@ -250,6 +250,9 @@ mcmc <- function(counts, class.ages = NULL, N=30000, burn = 2000, thin = 5, prop
 	params <- runif(2,0,5)
 	all.params <- matrix(,N,2)
 
+	# house keeping progress
+	progress <- round(seq(0,N,length.out=6))
+
 	# mcmc loop
 	accepted <- rep(0,N)
 	for(n in 1:N){
@@ -263,7 +266,7 @@ mcmc <- function(counts, class.ages = NULL, N=30000, burn = 2000, thin = 5, prop
 			params <- prop.params
 			accepted[n] <- 1
 			}
-		if(n%in%seq(0,N,by=1000))print(paste(n,'of',N,'samples completed'))
+		if(n%in%progress)print(paste(n,'of',N,'samples completed'))
 		}
 
 	# remove burnin
@@ -272,18 +275,19 @@ mcmc <- function(counts, class.ages = NULL, N=30000, burn = 2000, thin = 5, prop
 	# thinning
 	i <- seq(burn,N,by=thin)
 	res <- all.params[i,]
+	res <- as.data.frame(res); names(res) <- c('shape','mean')
+
+	# print acceptance ratio
+	print(paste('acceptance ratio = ',round(sum(accepted[burn:N])/nrow(N.sub),3)))
 
 	# look at chain
 	if(plot.chain){
 		par(mfrow=c(2,2))
 		plot(all.params[,1],type='l',xlab='Samples in chain',ylab='Gamma shape parameter',main='Entire chain')
 		plot(all.params[,2],type='l',xlab='Samples in chain',ylab='Gamma mean parameter',main='Entire chain')
-		hist(res[,1],breaks=50,xlab='Gamma shape parameter',main='Burn in removed and thinned',ylab='count')
-		hist(res[,2],breaks=50,xlab='Gamma mean parameter',main='Burn in removed and thinned',ylab='count')	
+		hist(res[,1],breaks=20,xlab='shape',main='Burn in removed and thinned',ylab='count')
+		hist(res[,2],breaks=20,xlab='mean',main='Burn in removed and thinned',ylab='count')	
 		}
-
-	# print acceptance ratio
-	print(paste('acceptance ratio = ',round(sum(accepted[burn:N])/nrow(N.sub),3)))
 
 return(res)}
 #-----------------------------------------------------------------------------------------------------------

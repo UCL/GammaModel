@@ -131,7 +131,7 @@ print(MLE) # log maximum likelihood estimate
 These model parameters can then be used to plot the full Gamma distribution using the dgamma() function. Notice this function requires 'shape' and 'rate' parameters, where rate = shape/mean.
 
 \begin{figure}
-<<gml2,fig.asp=0.6,eval=TRUE>>=
+<<gml2,fig.asp=0.6,eval=TRUE,comment=NA>>=
 # load data
 data(Neolithic) 
 
@@ -155,12 +155,56 @@ lines(x,y2,col=2,lwd=2)
 lines(x,y3,col=3,lwd=2)
 
 # legend
-legend(x=8, y=0.3, bty='n', col=1:3, lwd=2, legend= c('TRA','TES','WIK'))
+legend(x=8, y=0.3, bty='n', col=1:3, lwd=2, legend= c('TRA1','TES','WIK'))
 @
 \end{figure}
 
 \section{Gamma likelihood distribution}
-Whilst the Maximum Likelihood provides the single (most likely) point estimate for the Gamma parameters, these parameter values to not reflect the uncertainty due to both small sample sizes, and multi-class assignments. Instead, we can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc().
+We can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc(), to show the full uncertainty due to small sample sizes and multi-class assignments.  By default, mcmc() will output a progress update for each 20 percent completion. At completion the Acceptance Ratio (AR) is printed, and the full MCMC chain is plotted.  Together these allow the user to check the chain is well mixed, and a 'hairy catepillar' appearance togther with an acceptance ratio of around 0.4 suggests an efficient search.   Otherwise, the total number of iterations can be increased from the default argument N =30,000, and the default prop = 0.4 can be reduced, ensuring smaller average jumps by the proposal function.
+
+\begin{figure}
+<<mcmc1,fig.asp=0.6,eval=TRUE,cache=TRUE,comment=NA>>=
+data(Neolithic) # load data
+counts <- Neolithic['TRA1',]
+pars <- mcmc(counts) # generate a MCMC chain
+@
+\end{figure}
+
+Each row of the returned data frame is a sample from the joint likelihood distribution, after burnin and thinning. This can be graphically represented in various ways. 
+\begin{figure}
+<<mcmc2,eval=TRUE,cache=TRUE,comment=NA,dependson='mcmc1'>>=
+
+# plot the MCMC chain output
+plot(pars, pch='+',cex=0.5)
+
+# Add contour lines by first generating 2D kernels
+# Requires the library(ks) 
+H <- matrix(c(0.012, 0, 0, 0.012), 2, 2)
+fhat <- kde(x=pars, H=H)
+plot(fhat, drawlabels=T, lwd=2, lty=1, add=T, col='red')
+@
+\end{figure}
+
+Each sample from the MCMC chain is a pair of Gamma parameters that can be used to construct the full Gamma distribution, thus representing the uncertainty in the distribution directly, rather than via a graphic representation of the underlying parameters.
+
+\begin{figure}
+<<mcmc3,eval=TRUE,cache=TRUE,comment=NA,dependson='mcmc1'>>=
+# calculate the 'rate' parameter for each sample
+pars$rate <- pars$shape / pars$mean
+
+# generate an age range of interest
+x <- seq(0,5,length.out=1000)
+
+# start with a blank plot
+plot(NULL, xlim=c(0,5), ylim=c(0,0.5), xlab='age', ylab='PD', main='TRA1')
+
+# add 1000 samples from the chain
+for(n in 1:1000){
+	y <- dgamma(x, shape=pars$shape[n], rate=pars$rate[n])
+	lines(x,y,lwd=0.01)
+	}
+@
+\end{figure}
 
 \end{document}
 
