@@ -43,10 +43,10 @@
     par <- gammaMLparameters(counts)
 
     # Plot the Gamma distribution defined by these parameters
+    # Note, dgamma() requires the shape and rate
+
     x <- seq(0,10,length.out=1000)
-    shape <- par[1]
-    rate <- par[1]/par[2]
-    y <- dgamma(x, shape, rate)
+    y <- dgamma(x, shape = par$shape, rate = par$shape/par$mean )
     plot(x, y, type='l', xlab='age', ylab='PD', main='Gamma')
 
 	}

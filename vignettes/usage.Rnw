@@ -123,10 +123,9 @@ print(MLE) # log maximum likelihood estimate
 @
 
 \subsection{Gamma Maximum Likelihood}
-Maximum Likelihood Gamma parameters 'shape' and 'mean' can be obtained. These can then be used to plot the full Gamma distribution using the dgamma() function. Notice this function requires 'shape' and 'rate' parameters, where rate = shape/mean.
+Maximum Likelihood Gamma parameters 'shape' and 'mean' can be found as follows:
 
-\begin{figure}
-<<gml1,eval=TRUE,fig.asp=0.7>>=
+<<gml1,eval=TRUE,cache=TRUE>>=
 data(Neolithic)
 counts <- Neolithic['TRA1',]
 MLpar <- gammaMLparameters(counts)
@@ -138,6 +137,12 @@ print(MLE) # log maximum likelihood estimate
 p1 <- gammaMLparameters(Neolithic['TRA1',])
 p2 <- gammaMLparameters(Neolithic['TES',])
 p3 <- gammaMLparameters(Neolithic['WIK',])
+@
+
+These can then be used to plot the full Gamma distribution using the dgamma() function. Notice this function requires 'shape' and 'rate' parameters, where rate = shape/mean.  
+
+\begin{figure}
+<<gml2,eval=TRUE,cache=TRUE,dependson='gml1',fig.width=6,fig.height=4>>=
 
 # x-axis to cover 10 years
 x <- seq(0,10,length.out=1000) 
@@ -170,7 +175,7 @@ pars <- mcmc(counts) # generate a MCMC chain
 
 Each row of the returned data frame is a sample from the joint likelihood distribution, after burnin and thinning. This can be graphically represented in various ways. 
 \begin{figure}
-<<mcmc2,eval=TRUE,cache=TRUE,dependson='mcmc1'>>=
+<<mcmc2,eval=TRUE,cache=TRUE,dependson='mcmc1',fig.width=5,fig.height=5>>=
 
 # plot the MCMC chain output
 plot(pars, pch='+',cex=0.5)
@@ -187,7 +192,7 @@ plot(fhat, drawlabels=T, lwd=2, lty=1, add=T, col='red')
 Each sample from the MCMC chain is a pair of Gamma parameters that can be used to construct the full Gamma distribution, thus representing the uncertainty in the distribution directly, rather than via a graphic representation of the underlying parameters.
 
 \begin{figure}
-<<mcmc3,eval=TRUE,cache=TRUE,dependson='mcmc1'>>=
+<<mcmc3,eval=TRUE,cache=TRUE,dependson='mcmc1',fig.width=6,fig.height=4>>=
 # calculate the 'rate' parameter for each sample
 pars$rate <- pars$shape / pars$mean
 
@@ -206,9 +211,54 @@ for(n in 1:2000){
 @
 \end{figure}
 
+\section{Summary statistics and their Confidence Intervals}
+
+Useful summary statistics and their confidence intervals (CI) can be derived from the MCMC chain output.  The ML of the 'mean' parameter may be directly interpreted as the mean slaughter age of the herd. The MCMC chain of values are normally distributed (a consequence of the central limit theorem) and therefore the CI may be found using quantiles.  The mode can be interpreted as the most likely slaughter age, and calculated exactly using the ML parameters mean (mu) and shape (k) as follows: mode = (k - 1)(mu / k). Mathematically the mode is not defined for k smaller than 1 since the probability density function (PDF) = zero when age = 0. However the PDF asymptotically increases as the age approaches zero so for real data this constraint is irrelevant, and such distributions can be described as having a peak kill age of 'new-born'. In the same way, the mode can be calculated for each sample from the MCMC chain. These are not normally distributed so CI are calculated from the Highest Density Interval (HDI) using the p.interval() function in the LaplacesDemon package.  Finally, the age range covering the majority of slaughters is typically skewed, often bounded by zero (e.g. site FON1). This can calculated from the 50 percent HDI, again using the p.interval() function from LaplacesDemon.
+
+<<mcmc4,eval=TRUE,cache=TRUE,dependson='mcmc1'>>=
+#------------------------------------------------------------
+# mean slaughter age
+#------------------------------------------------------------
+# Maximum Likelihood
+MLpar$mean
+
+#95% CI
+quantile(pars$mean, c(0.025, 0.975))
+
+#------------------------------------------------------------
+# mode slaughter age (peak / most common)
+#------------------------------------------------------------
+# Maximum Likelihood
+mode <- (MLpar$shape - 1) * (MLpar$mean / MLpar$shape)
+
+# constrain to age zero
+if(mode < 0) mode <- 0
+print(mode)
+
+# 95% CI
+# first calculate the mode for each sample of the chain
+pars$mode <- (pars$shape - 1) * (pars$mean / pars$shape)
+
+# constrain to age zero
+pars$mode[pars$mode < 0] <- 0 
+
+# finally the 95% HDI
+library(LaplacesDemon)
+p.interval(pars$mode, prob = 0.95)
+
+#------------------------------------------------------------
+# Age range covering the majority of slaughters
+#------------------------------------------------------------
+# rgamma() requires shape and rate parameters
+MLpar$rate <- MLpar$shape / MLpar$mean
+
+# generate random samples from the distribution
+rg <- rgamma(1000000, shape = MLpar$shape, rate = MLpar$rate)
+
+# find the 50% HDI range
+p.interval(rg, prob = 0.5)
+@
+
+Note, the values output above are the result of one MCMC chain, and with therefore differ slightly if the mcmc() function is re-run. For improved accuracy longer or multiple chains are recommended.
+
 \end{document}
-
-
-
-
-
