@@ -104,7 +104,7 @@ GOF(counts, model)
 
 P-values are estimated by sampling 10,000 arrangements of the data, but for improved precision this default N argument value may be increased:
 <<gof5, eval=FALSE>>=
-GOF(counts, model, N = 1000000)
+GOF(counts, model, N = 20000)
 @
 
 \section{Maximum Likelihood}
@@ -178,7 +178,7 @@ Each row of the returned data frame is a sample from the joint likelihood distri
 <<mcmc2,eval=TRUE,cache=TRUE,dependson='mcmc1',fig.width=5,fig.height=5>>=
 
 # plot the MCMC chain output
-plot(pars, pch='+',cex=0.5)
+plot(pars, pch='+', cex = 0.5)
 
 # Add contour lines by first generating 2D kernels
 # Requires the ks package
