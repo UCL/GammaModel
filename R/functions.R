@@ -357,15 +357,3 @@ ageClassLogMLE <- function(counts, N = 200, I = 40, C = 2){
 	res <- max(liks)
 return(res)}
 #-----------------------------------------------------------------------------------------------------------
-# to do......
-
-# write Vignette, which needs to be much prettier. Include instructions on how to install from github. Also include these instructions on the main github readme
-# store tarball, vignette and pdf manual on github
-# Complete corrections to paper (new results waiting on  Myriad)
-# Request co-authors read and edit:
-# 	response to review
-#	manuscript V3.0
-#	vignette
-#	pdf manual (ergo the help files)
-# 	install and test package (ie work through vignette)
-#-----------------------------------------------------------------------------------------------------------
