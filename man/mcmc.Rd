@@ -37,7 +37,7 @@
 	Generates a single Markov Chain Monte Carlo (MCMC) chain 	of Gamma distribution parameter samples, using the 	Metropolis-Hastings algorithm.
 	}
 \details{
-	Prints progress every 1000th sample, and the final 	acceptance ratio (AR). For an efficient chain this should 	be around 0.3 to 0.6. If the AR is too low, efficiency 	can be improved by lowering the value of the prop 	argument.
+	Prints progress every 1000th sample, and the final 	acceptance rate. For an efficient chain this should 	be around 0.3 to 0.6. If the rate is too low, efficiency 	can be improved by lowering the value of the prop 	argument.
 
 	The chain can be inspected to ensure good mixing using 	the default plot.chain = TRUE.
 	}
