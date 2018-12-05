@@ -277,8 +277,8 @@ mcmc <- function(counts, class.ages = NULL, N=30000, burn = 2000, thin = 5, prop
 	res <- all.params[i,]
 	res <- as.data.frame(res); names(res) <- c('shape','mean')
 
-	# print acceptance ratio
-	print(paste('acceptance ratio = ',round(sum(accepted[burn:N])/nrow(N.sub),3)))
+	# print acceptance rate
+	print(paste('acceptance rate = ',round(sum(accepted[burn:N])/nrow(N.sub),3)))
 
 	# look at chain
 	if(plot.chain){
