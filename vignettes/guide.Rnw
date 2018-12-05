@@ -163,7 +163,7 @@ legend(x=8, y=0.3, bty='n', col=1:3, lwd=2, legend= c('TRA1','TES','WIK'))
 \end{figure}
 
 \section{Gamma likelihood distribution}
-We can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc(), to show the full uncertainty due to small sample sizes and multi-class assignments.  By default, mcmc() will output a progress update for each 20 percent completion. At completion the Acceptance Ratio (AR) is printed, and the full MCMC chain is plotted.  Together these allow the user to check the chain is well mixed, and a 'hairy catepillar' appearance togther with an acceptance ratio of around 0.4 suggests an efficient search.   Otherwise, the total number of iterations can be increased from the default argument N =30,000, and the default prop = 0.4 can be reduced, ensuring smaller average jumps by the proposal function.
+We can find the full joint likelihood distribution of the Gamma parameters 'shape' and 'mean' via Markov Chain Monte Carlo (MCMC), using the function mcmc(), to show the full uncertainty due to small sample sizes and multi-class assignments.  By default, mcmc() will output a progress update for each 20 percent completion. At completion the Acceptance Rate is printed, and the full MCMC chain is plotted.  Together these allow the user to check the chain is well mixed, and a 'hairy catepillar' appearance togther with an acceptance rate of around 0.4 suggests an efficient search.   Otherwise, the total number of iterations can be increased from the default argument N =30,000, and the default prop = 0.4 can be reduced, ensuring smaller average jumps by the proposal function.
 
 \begin{figure}
 <<mcmc1,eval=TRUE,cache=TRUE>>=
